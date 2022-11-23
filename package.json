@@ -1,0 +1,119 @@
+{
+    "name": "firstcap",
+    "version": "1.0.0",
+    "description": "A simple CAP project.",
+    "repository": "<Add your repository here>",
+    "license": "UNLICENSED",
+    "private": true,
+    "dependencies": {
+        "@sap-cloud-sdk/http-client": "^2.5",
+        "@sap/cds": "^6.3.2",
+        "@sap/cds-mtx": "^2.6.4",
+        "@sap/hana-client": "^2.14.23",
+        "@sap/xsenv": "^3.4.0",
+        "cfenv": "^1.2.4",
+        "cli": "^1.0.1",
+        "express": "^4",
+        "hdb": "^0.19.5",
+        "http-client": "^4.3.1",
+        "passport": "^0.6.0"
+    },
+    "devDependencies": {
+        "@sap/ux-specification": "^1.102.12",
+        "rimraf": "^3.0.2",
+        "sqlite3": "^5.0.4"
+    },
+    "scripts": {
+        "start": "cds run",
+        "watch-project1": "cds watch --open project1/webapp/index.html?sap-ui-xx-viewCache=false",
+        "undeploy": "cf undeploy firstcap --delete-services --delete-service-keys --delete-service-brokers",
+        "build": "rimraf resources mta_archives && mbt build --mtar archive",
+        "deploy": "cf deploy mta_archives/archive.mtar --retries 1"
+    },
+    "engines": {
+        "node": "^16.15"
+    },
+    "eslintConfig": {
+        "extends": "eslint:recommended",
+        "env": {
+            "es2020": true,
+            "node": true,
+            "jest": true,
+            "mocha": true
+        },
+        "globals": {
+            "SELECT": true,
+            "INSERT": true,
+            "UPDATE": true,
+            "DELETE": true,
+            "CREATE": true,
+            "DROP": true,
+            "CDL": true,
+            "CQL": true,
+            "CXL": true,
+            "cds": true
+        },
+        "rules": {
+            "no-console": "off",
+            "require-atomic-updates": "off"
+        }
+    },
+    "cds": {
+        "requires": {
+            "uaa": {
+                "kind": "xsuaa"
+            },
+            "auth": {
+                "[production]": {
+                    "strategy": "JWT"
+                },
+                "[development]": {
+                    "strategy": "mock",
+                    "users": {
+                        "joe": {
+                            "roles": [
+                                "Admin",
+                                "Viewer",
+                                "internal-user"
+                            ],
+                            "tenant": "t1"
+                        },
+                        "julie": {
+                            "roles": [
+                                "Viewer"
+                            ],
+                            "tenant": "t2"
+                        },
+                        "bob": {
+                            "roles": [
+                                "Viewer"
+                            ],
+                            "tenant": "t3"
+                        }
+                    }
+                }
+            },
+            "db": {
+                "[production]": {
+                    "kind": "hana-mt"
+                },
+                "[development]": {
+                    "kind": "sql-mt"
+                },
+                "model": [
+                    "db",
+                    "srv"
+                ],
+                "vcap": {
+                    "label": "service-manager"
+                }
+            },
+            "multitenancy": true,
+            "toggles": false,
+            "extensibility": false
+        }
+    },
+    "sapux": [
+        "app/project1"
+    ]
+}
